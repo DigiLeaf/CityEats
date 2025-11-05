@@ -19,18 +19,17 @@
         <header>
             <div class="pagetitle"> <h1>City Eats!</h1> </div>
             <!-- Collecting user input-->
+            <form action='/' method='GET'>
             <div class="search-bar"> 
-                <input type="text" placeholder="Search City">
-                <input type="text" placeholder="Search Food Style">
+                <input id="citysearch" type="text" placeholder="Search City" name="city">
+                <input id="foodsearch" type="text" placeholder="Search Food Style" name="foodstyle">
                 <input id ="searchbtn" type="submit" value="Search">
             </div>
+            </form>
         </header>
             <!--Display of Search results based on area-->
-            <div class="search-results">
-                <div class="result">
-                    <h3 class="rest-name"> Angelos </h3>
-                    <img src="./Resources/Restaurant Images test/angelos.jpg" class="rest-pic">
-                </div>                
+            <div id="search-results" class="search-results">
+              
             </div>
         <script src="./app.js"></script>
     </body>

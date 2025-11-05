@@ -75,12 +75,12 @@ header{
     box-shadow: 0rem 1rem 1.25rem 0rem ;
 }
 
-.result-transition{
-
-    transition: background-color 0.2s ease, border-color 0.2s ease;
-}
 .result:hover{
     cursor:pointer;
+    background-color: #be4f0c;
+    border-color: #be4f0c;
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+
 }
 .result h3{
     color: #DFDCE3;

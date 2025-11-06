@@ -19,7 +19,7 @@ async function handleSearch(event){
 
 //Fetches restaurant Data based on user search criteria 
 async function FetchData(city, style){
-let arr = await fetch('rest.json')
+let arr = await fetch('https://jsonplaceholder.typicode.com/users')
         .then((res)=>res.json())
         .then((data)=> {console.log(data)
             return data;
@@ -39,8 +39,10 @@ function displayResults(data){
     data.forEach((place) => {
         const card = document.createElement("div");
         card.classList.add("result");
-        card.innerHTML=`<h3>${place.name}</h3>
-                        <p>${place.style}</p>`
+        card.innerHTML=`<h3>Name ${place.name}</h3>
+                        <p>Username ${place.username}</p>
+                        <p>Address ${place.address.street} ${place.address.suite}</p>
+                        <p>${place.address.city} ${place.address.zipcode}</p>`
         resultsDiv.appendChild(card)
     });
 

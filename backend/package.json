@@ -1,0 +1,28 @@
+{
+  "name": "cityeats",
+  "version": "1.0.0",
+  "description": "This will be a program that can be used to recommend good eats whever you may be!",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DigiLeaf/CityEats.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/DigiLeaf/CityEats/issues"
+  },
+  "homepage": "https://github.com/DigiLeaf/CityEats#readme",
+  "dependencies": {
+    "axios": "^1.13.2",
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.3",
+    "express": "^5.1.0",
+    "nodemon": "^3.1.10"
+  }
+}

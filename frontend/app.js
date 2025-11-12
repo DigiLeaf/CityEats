@@ -51,6 +51,7 @@ function displayResults(data){
     
 
     //normalize the data so its always an array to iterate over
+    let results;
     if (Array.isArray(data)){
         results = data;
     }
@@ -58,12 +59,15 @@ function displayResults(data){
         results = [data]
     }
     try {
-        for(i=0;i<=results.length;i++){
+        for(i=0;i<results.length;i++){
             //Creating html element for display and displaying it
             const card = document.createElement("div");
             card.classList.add("result");
             card.innerHTML=`<h3> ${results[i].name}</h3>
-                            <p> ${results[i].username}</p>`
+                            <img>
+                            <p> ${results[i].username}</p>
+                            <p>${results[i].address.street}, ${results[i].address.city}, ${results[i].address.zipcode}</p>`
+                            
             resultsDiv.appendChild(card)
                     }
                 }

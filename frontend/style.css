@@ -87,6 +87,8 @@ header{
 }
 .result img{
     border-radius: 1rem;
+    width: 21rem;
+    height: 21rem;
 }
 .result h3 {
     text-align: center;

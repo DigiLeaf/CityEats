@@ -1,3 +1,5 @@
+const { json } = require("express")
+
 async function apiFetch(city,style) {
     console.log(`Attemplting to query the API with ${city} & ${style}`)
     if (city=="" && style!="")
@@ -36,7 +38,35 @@ async function apiFetch(city,style) {
     }    
 }
 
+function trimAPIData(data){
+    let trimmedData =[]
+    let tobeTrim;
+    if (Array.isArray(data) === true){
+        tobeTrim = data;
+    }
+    else{
+        tobeTrim =[data]
+    }
+
+    for(let i=0;i< tobeTrim.length;i++)
+    {
+        let restaurant ={
+            name: tobeTrim[i].name,
+            username: tobeTrim[i].username,
+            address: {
+                street: tobeTrim[i].address.street,
+                city: tobeTrim[i].address.city,
+                zipcode: tobeTrim[i].address.zipcode
+            }
+        }
+        
+        trimmedData.push(restaurant);
+
+        console.log(trimmedData)    
+        }
+    return trimmedData;
+}
 
 
 
-module.exports = apiFetch;
+module.exports = {apiFetch, trimAPIData};

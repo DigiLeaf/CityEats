@@ -1,7 +1,7 @@
 const express = require('express')
 const router = express.Router();
 
-const apiFetch =require('../utilities/utils.js')
+const {apiFetch, trimAPIData} =require('../utilities/utils.js')
 
 router.get("/", async (req,res)=>{
     try{
@@ -14,10 +14,15 @@ router.get("/", async (req,res)=>{
     console.log(`Query parameters are Name ${cityparam} and Username ${styleparam}`)
 
     const resultarr = await apiFetch(cityparam,styleparam)
+    
+    const trimmedData = trimAPIData(resultarr)
+
+
 
     console.log("about to return api results")
     
-    res.json(resultarr)
+    res.json(trimmedData)
+    console.log(trimmedData)
     console.log("returned the results")
     }
     catch (err){

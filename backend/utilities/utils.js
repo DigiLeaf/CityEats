@@ -1,10 +1,12 @@
 const { json } = require("express")
 
+const API_url = process.env.API_URL
+
 async function apiFetch(city,style) {
     console.log(`Attemplting to query the API with ${city} & ${style}`)
     if (city=="" && style!="")
     {
-        const queriedResults = await fetch(`https://jsonplaceholder.typicode.com/users?username=${style}`)
+        const queriedResults = await fetch(`${API_url}?category=${style}`)
         .then((response) =>{return response.json()})
         .catch((err) =>{console.log(err)})
 
@@ -14,7 +16,7 @@ async function apiFetch(city,style) {
     }
     else if (city!="" && style == "")
     {
-        const queriedResults = await fetch(`https://jsonplaceholder.typicode.com/users?name=${city}`)
+        const queriedResults = await fetch(`${API_url}?name=${city}`)
         .then((response) =>{return response.json()})
         .catch((err) =>{console.log(err)})
 
@@ -25,7 +27,7 @@ async function apiFetch(city,style) {
     }
     else if(city!="" && style != "")
     {
-        const queriedResults = await fetch(`https://jsonplaceholder.typicode.com/users?name=${city}&username=${style}`)
+        const queriedResults = await fetch(`${API_url}?name=${city}&category=${style}`)
         .then((response) =>{return response.json()})
         .catch((err) =>{console.log(err)})
 
@@ -51,19 +53,19 @@ function trimAPIData(data){
     for(let i=0;i< tobeTrim.length;i++)
     {
         let restaurant ={
-            name: tobeTrim[i].name,
-            username: tobeTrim[i].username,
-            address: {
+            name: tobeTrim[i].restaurantName,
+            style: tobeTrim[i].type,
+            /*address: {
                 street: tobeTrim[i].address.street,
                 city: tobeTrim[i].address.city,
-                zipcode: tobeTrim[i].address.zipcode
+                zipcode: tobeTrim[i].address.zipcode*/
+            address: tobeTrim[i].address
             }
-        }
         
         trimmedData.push(restaurant);
-
+    }
         console.log(trimmedData)    
-        }
+
     return trimmedData;
 }
 

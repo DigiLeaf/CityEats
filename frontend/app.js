@@ -64,9 +64,10 @@ function displayResults(data){
             const card = document.createElement("div");
             card.classList.add("result");
             card.innerHTML=`<h3> ${results[i].name}</h3>
-                            <img>
-                            <p> ${results[i].username}</p>
-                            <p>${results[i].address.street}, ${results[i].address.city}, ${results[i].address.zipcode}</p>`
+                            <p> ${results[i].style}</p>
+                            <p> ${results[i].address}</p>
+                            <img>`
+                            //`<p>${results[i].address.street}, ${results[i].address.city}, ${results[i].address.zipcode}</p>`
                             
             resultsDiv.appendChild(card)
                     }

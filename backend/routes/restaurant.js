@@ -11,11 +11,11 @@ router.get("/", async (req,res)=>{
 
 
     console.log("recieved request from /restaurants")
-    console.log(`Query parameters are Name ${cityparam} and Username ${styleparam}`)
+    console.log(`Query parameters are City: ${cityparam} and Style: ${styleparam}`)
 
     const resultarr = await apiFetch(cityparam,styleparam)
     
-    const trimmedData = trimAPIData(resultarr)
+    const trimmedData = trimAPIData(resultarr.places)
 
 
 

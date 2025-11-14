@@ -1,7 +1,7 @@
-const { json } = require("express")
-
 const API_url = process.env.API_URL
-
+const API_key = process.env.API_KEY
+/*
+THIS is the original way NON-POST Request
 async function apiFetch(city,style) {
     console.log(`Attemplting to query the API with ${city} & ${style}`)
     if (city=="" && style!="")
@@ -39,6 +39,30 @@ async function apiFetch(city,style) {
         console.log("Error you shouldnt have gotten here!")
     }    
 }
+*/
+
+//GOOGLE PLACES API NEEDS POST REQUEST
+async function apiFetch(city, style) {
+    const queriedResults = await fetch(`${API_url}`,
+        {
+            method: 'POST',
+            headers:{
+                "Content-type": "application/json",
+                'X-Goog-Api-Key':`${API_key}`,
+                'X-Goog-FieldMask': 'places.displayName,places.formattedAddress,places.types',
+            },
+            body: JSON.stringify({
+                textQuery: `${style} restaurants in ${city}`
+            }),
+        }
+    )
+    const googData = await queriedResults.json()
+    //console.log("DATA FROM GOOGLE")
+    //console.log(googData)
+    return googData;
+}
+
+
 
 function trimAPIData(data){
     let trimmedData =[]
@@ -52,16 +76,20 @@ function trimAPIData(data){
 
     for(let i=0;i< tobeTrim.length;i++)
     {
+        let place = tobeTrim[i]
+        let reststyle = null;
+
+        //Search types array for only restaurant main styles not all offered
+        if (Array.isArray(place.types)){
+            reststyle = place.types.find((mainStyles)=>mainStyles.endsWith("_restaurant"))
+        }
+
+
         let restaurant ={
-            name: tobeTrim[i].restaurantName,
-            style: tobeTrim[i].type,
-            /*address: {
-                street: tobeTrim[i].address.street,
-                city: tobeTrim[i].address.city,
-                zipcode: tobeTrim[i].address.zipcode*/
-            address: tobeTrim[i].address
+            name: tobeTrim[i].displayName.text || "Unknown",
+            style: reststyle || 'restaurant',
+            address: tobeTrim[i].formattedAddress || "N/A"
             }
-        
         trimmedData.push(restaurant);
     }
         console.log(trimmedData)    

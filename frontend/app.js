@@ -25,7 +25,7 @@ async function handleSearch(event){
 
 //Fetches restaurant Data based on user search criteria 
 async function FetchData(city, prov, style){
-const destUrl = `https://cityeats.onrender.com/restaurants?city=${city}&prov=${prov}&style=${style}`
+const destUrl = `https://cityeats-backend.onrender.com/restaurants?city=${city}&prov=${prov}&style=${style}`
 //console.log("starting initial await")
 const arr = await fetch(destUrl)
         .then((res)=> {

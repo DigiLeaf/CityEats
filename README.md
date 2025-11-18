@@ -35,11 +35,13 @@ The app provides restaurant names, ratings, primary cuisine styles, and addresse
 1. Clone the repository
 2. Navigate into the project folder
 3. Install backend dependencies
-    express, dotenv, cors
-4. Set up environment variables (i.e. API_KEY, etc.)
+```npm install express, dotenv, cors```
+
+4. Set up environment variables (i.e. API_KEY, etc.).
 5. Start the server
-    node server.js
-5. Open the frontend CityEats.html in your browser
+```node server.js```
+
+6. Open the frontend CityEats.html in your browser
 
 ## Future Improvement
 - Improve search accuracy with location bias

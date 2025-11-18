@@ -9,19 +9,23 @@ async function handleSearch(event){
     //Gets value in search fields
     const citysearch = document.getElementById("citysearch").value;
     //console.log(`Sending for Search ${citysearch}`)
+    
+    const provsearch = document.getElementById("provincesearch").value;
+    //console.log(`Sending for Search ${provsearch}`)
+    
     const foodsearch = document.getElementById("foodsearch").value;
     //console.log(`Sending for Search${foodsearch}`)
-
+    
     //searches file/API based on criteria in search fields
-    const data = await FetchData(citysearch,foodsearch)
+    const data = await FetchData(citysearch,provsearch, foodsearch)
 
     //console.log("Attempting to display the data")
     displayResults(data);
 }
 
 //Fetches restaurant Data based on user search criteria 
-async function FetchData(city, style){
-const destUrl = `http://localhost:5000/restaurants?name=${city}&username=${style}`
+async function FetchData(city, prov, style){
+const destUrl = `http://localhost:5000/restaurants?city=${city}&prov=${prov}&style=${style}`
 //console.log("starting initial await")
 const arr = await fetch(destUrl)
         .then((res)=> {
@@ -43,13 +47,11 @@ function displayResults(data){
 
     //console.log(`Here is what im attempting to display! ${data}`)
     
-
     //debug purposes
     console.log("Type of data:", typeof data);
     console.log("Is array?", Array.isArray(data));
     console.log("Data value:", data);
     
-
     //normalize the data so its always an array to iterate over
     let results;
     if (Array.isArray(data)){
@@ -64,11 +66,11 @@ function displayResults(data){
             const card = document.createElement("div");
             card.classList.add("result");
             card.innerHTML=`<h3> ${results[i].name}</h3>
-                            <p> ${results[i].style}</p>
+                            <p> ${results[i].style.slice(0,3).join(" - ")|| '<br>'}</p> 
+                            <p> Rating:${results[i].rating}/5</p>
                             <p> ${results[i].address}</p>
-                            <img>`
-                            //`<p>${results[i].address.street}, ${results[i].address.city}, ${results[i].address.zipcode}</p>`
-                            
+                            <img src=${results[i].image}>`
+                            //`<p>${results[i].address.street}, ${results[i].address.city}, ${results[i].address.zipcode}</p>`                 
             resultsDiv.appendChild(card)
                     }
                 }
@@ -82,8 +84,6 @@ function displayResults(data){
 function searchOnClick(button){
     button.addEventListener("click", handleSearch)
 }
-
-
 
 
 //Adds event listener to search button

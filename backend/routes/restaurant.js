@@ -5,19 +5,17 @@ const {apiFetch, trimAPIData} =require('../utilities/utils.js')
 
 router.get("/", async (req,res)=>{
     try{
-    //Querying url for the search params to make request to API only for desire results
-    const cityparam = req.query.name
-    const styleparam = req.query.username
+    //Querying url for the search params to make request to API only for desired results
+    const cityparam = req.query.city
+    const provparam = req.query.prov
+    const styleparam = req.query.style
+    
+    //console.log("recieved request from /restaurants")
+    //console.log(`Query parameters are City: ${cityparam}, Prov: ${provparam}, Style: ${styleparam}`)
 
-
-    console.log("recieved request from /restaurants")
-    console.log(`Query parameters are City: ${cityparam} and Style: ${styleparam}`)
-
-    const resultarr = await apiFetch(cityparam,styleparam)
+    const resultarr = await apiFetch(cityparam, provparam, styleparam)
     
     const trimmedData = trimAPIData(resultarr.places)
-
-
 
     console.log("about to return api results")
     

@@ -41,18 +41,19 @@ async function apiFetch(city,style) {
 }
 */
 
-//GOOGLE PLACES API NEEDS POST REQUEST
-async function apiFetch(city, style) {
+async function apiFetch(city, prov, style) {
     const queriedResults = await fetch(`${API_url}`,
         {
+            //Google Place API wants search request as a POST request
             method: 'POST',
             headers:{
                 "Content-type": "application/json",
                 'X-Goog-Api-Key':`${API_key}`,
-                'X-Goog-FieldMask': 'places.displayName,places.formattedAddress,places.types',
+                'X-Goog-FieldMask': 'places.displayName,places.formattedAddress,places.types,places.photos,places.rating',
             },
             body: JSON.stringify({
-                textQuery: `${style} restaurants in ${city}`
+                textQuery: `${style} restaurants in ${city} ${prov}`,
+                pageSize: 12,
             }),
         }
     )
@@ -62,11 +63,20 @@ async function apiFetch(city, style) {
     return googData;
 }
 
+function imgGather(photoReference){
+    if (!photoReference) return null;
+
+    return `https://places.googleapis.com/v1/${photoReference}/media?key=${API_key}&maxHeightPx=400&maxWidthPx=560`
+
+}
+
+
 
 
 function trimAPIData(data){
     let trimmedData =[]
     let tobeTrim;
+    //ensures data is an array so its easily iterable
     if (Array.isArray(data) === true){
         tobeTrim = data;
     }
@@ -74,29 +84,42 @@ function trimAPIData(data){
         tobeTrim =[data]
     }
 
+    //rebuild object with only data frontend wants
     for(let i=0;i< tobeTrim.length;i++)
     {
-        let place = tobeTrim[i]
-        let reststyle = null;
-
-        //Search types array for only restaurant main styles not all offered
-        if (Array.isArray(place.types)){
-            reststyle = place.types.find((mainStyles)=>mainStyles.endsWith("_restaurant"))
-        }
-
-
         let restaurant ={
             name: tobeTrim[i].displayName.text || "Unknown",
-            style: reststyle || 'restaurant',
-            address: tobeTrim[i].formattedAddress || "N/A"
+            style: getRestTypes(tobeTrim[i].types) || 'restaurant',
+            rating: tobeTrim[i].rating || null,
+            address: tobeTrim[i].formattedAddress || "N/A",
+            image: imgGather(tobeTrim[i].photos[0].name) || null
+
             }
         trimmedData.push(restaurant);
     }
-        console.log(trimmedData)    
+        //console.log(trimmedData)
+
 
     return trimmedData;
 }
 
+function getRestTypes(placeTypes){
+    if (!Array.isArray(placeTypes)) return ['restaurant'];
+
+    //Gets all main restaurant types from API data
+    const matches = placeTypes.filter(type =>{return type.endsWith("_restaurant")})
+
+        let shortType =[]
+
+    //removes _restaurant from type and capitalizes first letter
+    for (let i=0;i<matches.length;i++)
+    {
+        let cleaned  = matches[i].replace('_restaurant', '')
+        cleaned = cleaned.charAt(0).toUpperCase() + cleaned.slice(1)
+        shortType.push(cleaned)
+    }
+    return shortType;
+}
 
 
 module.exports = {apiFetch, trimAPIData};

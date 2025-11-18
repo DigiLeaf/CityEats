@@ -17,11 +17,11 @@ router.get("/", async (req,res)=>{
     
     const trimmedData = trimAPIData(resultarr.places)
 
-    console.log("about to return api results")
+    //console.log("about to return api results")
     
     res.json(trimmedData)
-    console.log(trimmedData)
-    console.log("returned the results")
+    //console.log(trimmedData)
+    //console.log("returned the results")
     }
     catch (err){
         console.log("There is an error in the /restuarants route", err)

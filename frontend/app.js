@@ -25,17 +25,17 @@ async function handleSearch(event){
 
 //Fetches restaurant Data based on user search criteria 
 async function FetchData(city, prov, style){
-const destUrl = `http://localhost:5000/restaurants?city=${city}&prov=${prov}&style=${style}`
+const destUrl = `https://cityeats.onrender.com/restaurants?city=${city}&prov=${prov}&style=${style}`
 //console.log("starting initial await")
 const arr = await fetch(destUrl)
         .then((res)=> {
-            console.log(`Recieved a response from backened Backend: ${res}`)
-            console.log(res)
+            //console.log(`Recieved a response from backened Backend: ${res}`)
+            //console.log(res)
             return res
         })
         .catch((err) => {console.log(err)})
     const data = await arr.json()
-    console.log("parsed the data")
+    //console.log("parsed the data")
 return data;
 }
 
@@ -47,11 +47,12 @@ function displayResults(data){
 
     //console.log(`Here is what im attempting to display! ${data}`)
     
-    //debug purposes
+    /*
     console.log("Type of data:", typeof data);
     console.log("Is array?", Array.isArray(data));
     console.log("Data value:", data);
-    
+    */
+
     //normalize the data so its always an array to iterate over
     let results;
     if (Array.isArray(data)){

@@ -49,7 +49,7 @@ async function apiFetch(city, prov, style) {
             headers:{
                 "Content-type": "application/json",
                 'X-Goog-Api-Key':`${API_key}`,
-                'X-Goog-FieldMask': 'places.displayName,places.formattedAddress,places.types,places.photos,places.rating',
+                'X-Goog-FieldMask': 'places.displayName,places.formattedAddress,places.types,places.photos,places.rating,places.websiteUri',
             },
             body: JSON.stringify({
                 textQuery: `${style} restaurants in ${city} ${prov}`,
@@ -87,12 +87,17 @@ function trimAPIData(data){
     //rebuild object with only data frontend wants
     for(let i=0;i< tobeTrim.length;i++)
     {
+        let imageRef = null 
+        if (tobeTrim[i].photos && tobeTrim[i].photos.length > 0){
+            imageRef = tobeTrim[i].photos[0].name
+        }
         let restaurant ={
             name: tobeTrim[i].displayName.text || "Unknown",
             style: getRestTypes(tobeTrim[i].types) || 'restaurant',
             rating: tobeTrim[i].rating || null,
             address: tobeTrim[i].formattedAddress || "N/A",
-            image: imgGather(tobeTrim[i].photos[0].name) || null
+            image: imgGather(imageRef) || null,
+            uri: tobeTrim[i].websiteUri || null
 
             }
         trimmedData.push(restaurant);

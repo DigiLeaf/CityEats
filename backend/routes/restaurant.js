@@ -15,6 +15,7 @@ router.get("/", async (req,res)=>{
 
     const resultarr = await apiFetch(cityparam, provparam, styleparam)
     
+    console.log("Heres what im trimming", resultarr)
     const trimmedData = trimAPIData(resultarr.places)
 
     //console.log("about to return api results")

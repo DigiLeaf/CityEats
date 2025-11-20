@@ -2,11 +2,16 @@
 CityEats is a lightweight restaurant-recommendation application that helps users quickly find popular places to eat in any city. 
 The app provides restaurant names, ratings, primary cuisine styles, and addresses using data from Google Places.
 
+## Live Demo
+Check it out here:
+ - https://cityeats.onrender.com
+
 ## Features
  - Search restaurants by city and cuisine/style
  - View restaurant names, ratings, addresses
  - Uses Google Places API for accurate real-time data
  - Simple, responsive frontend and lightweight backend.
+ 
 ## Tech Stack
 - **Frontend:**
   - HTML
@@ -21,7 +26,7 @@ The app provides restaurant names, ratings, primary cuisine styles, and addresse
   - Google Places
     
 - **Hosting Services**
-  - Unavailable
+  - Render
 
 
 ## How it Works
@@ -41,7 +46,7 @@ The app provides restaurant names, ratings, primary cuisine styles, and addresse
 5. Start the server
 ```node server.js```
 
-6. Open the frontend CityEats.html in your browser
+6. Open the frontend index.html in your browser
 
 ## Future Improvement
 - Improve search accuracy with location bias

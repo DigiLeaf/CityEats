@@ -101,3 +101,29 @@ header{
     margin:auto
 
 }
+
+.user-fields{
+    background-color: #393939;
+    color: #DFDCE3;
+    position:fixed;
+    display:flex;
+    justify-content: center;
+    width:100%;
+    padding:0.5rem;
+    bottom:0px;
+}
+
+
+.btn {
+    margin: 0rem 0.5rem 0rem 0.1rem;
+    padding: 0.375rem;
+    margin-top: 0.5rem;
+    font-size: 1.063rem;
+    border: none;
+}
+
+
+.user-fields input[type=submit]:hover{
+  background-color: #ccc;
+  cursor: pointer;
+}

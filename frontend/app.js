@@ -1,7 +1,13 @@
+
 //Locates search button on homepage
 const searchbtn = document.getElementById("searchbtn");
 const loadingdiv = document.getElementById("loading");
 const faileddiv = document.getElementById("failedsearch")
+
+const createbtn = document.getElementById("createbtn")
+const loginbtn = document.getElementById("loginbtn")
+const deletebutton = document.getElementById("deletebtn")
+const showfavbutton = document.getElementById("showfavbtn")
 
 //sends user search criteria to API 
 async function handleSearch(event){
@@ -81,31 +87,276 @@ function displayResults(data){
             //Creating html element for display and displaying it
             const card = document.createElement("div");
             card.classList.add("result");
-            card.innerHTML=`
-                            <h3> ${results[i].name}</h3>
-                            <p> ${results[i].style.slice(0,3).join(" - ")|| '<br>'}</p> 
-                            <p> Rating:${results[i].rating}/5</p>
-                            <p> ${results[i].address}</p>
-                            <img src=${results[i].image || "./Resources/MissingImg.jpg"}>`
+            card.innerHTML=`<a class='rest_uri' href=${results[i].uri}></a>
+                            <h3 class="rest_name" >${results[i].name}</h3>
+                            <p class="rest_style" >${results[i].style.slice(0,3).join(" - ")|| '<br>'}</p> 
+                            <p class="rest_rating" >Rating:${results[i].rating}/5</p>
+                            <p class="rest_address">${results[i].address}</p>
+                            <img class="rest_img"  src=${results[i].image || "./Resources/MissingImg.jpg"}>
+                            <input id="fav-rest" type="submit" value="Favorite" style="z-index:10">`
                 
             //Adds event listener to entire card so entire card is clickable.
+            card.querySelector('#fav-rest').addEventListener('click', function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+                console.log(this.querySelector('#rest_name'.textContent))
+                sendPUTRequest("/addFav",card) })
+        
+
             card.addEventListener('click', () =>{
                 window.open(`${results[i].uri}`,'_blank')
             })
-            resultsDiv.appendChild(card)
+            
+        resultsDiv.appendChild(card)
         }
-                }
+        }
+        
     catch (err){
         console.log("Given data is neither object or array ERROR", err)
     }
+}
+
+//handles login/ user creation
+async function sendPOSTRequest(route){
+    const name = document.getElementById('name').value
+    const password = document.getElementById('password').value
+    const display = document.getElementById('displayresult');
+
+
+    try {
+        const response = await fetch(`http://localhost:5000/users${route}`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ name, password })
+        });
+
+        const data = await response.json()
+        if (!response.ok) {
+            display.textContent = data.message || "Invalid request.";
+        }
+        else{
+            display.textContent = data.message ||`User ${data.name} successfully ${route === '/login' ? 'logged in' : "created"}`
+            deletebutton.style.display="inline-block"
+            showfavbutton.style.display="inline-block"
+
+        }
+    }
+    catch (err) {
+        console.log(err);
+        document.getElementById("displayresult").textContent="Server Error"
+        }
+}
+
+//handles deleting user data
+async function sendDELRequest(route, card = undefined){
+    const name = document.getElementById('name').value
+    const display = document.getElementById('displayresult');
+    let response;
+    try {
+        if (!card){
+        response = await fetch(`http://localhost:5000/users${route}/${name}`, {
+            method: "DELETE",
+        })}
+        else{
+
+           //console.log("CARD:", card); 
+           const favToRemove = {
+                rest_address: card.querySelector('.rest_address').textContent,
+                //rest_uri: card.querySelector('.rest_uri').href,
+
+            };
+
+            response = await fetch(`http://localhost:5000/users${route}/${name}`, {
+                method: "DELETE",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(favToRemove)  
+            });
+        }
+
+        const data = await response.json()
+        console.log(data)
+        if (!response.ok) {
+            display.textContent = data.message || "Invalid request.";
+        }
+        else{
+            display.textContent = `${name}'s data successfully deleted`
+            deletebutton.style.display = "none"
+            showfavbutton.style.display = "none"
+        }
+
+    }
+    catch (err) {
+        console.log(err);
+        document.getElementById("displayresult").textContent="Server Error"
+        }
+}
+
+
+
+//Handles updating Favorites list
+async function sendPUTRequest(route, card){
+    //get all fields needed to send to backend
+    const user = document.getElementById('name').value
+    const newFav ={
+        rest_name: card.querySelector('.rest_name').textContent,
+        rest_style: card.querySelector('.rest_style').textContent,
+        rest_rating: card.querySelector('.rest_rating').textContent,
+        rest_address: card.querySelector('.rest_address').textContent,
+        rest_image: card.querySelector('.rest_img').src,
+        rest_uri: card.querySelector('.rest_uri').href,
+    }
+
+    const display = document.getElementById('displayresult');
+
+    try {
+        console.log("attempting to add to favs", newFav) 
+        const response = await fetch(`http://localhost:5000/users${route}/${user}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(newFav)
+        });
+
+        const data = await response.json()
+        console.log(data)
+        if (!response.ok) {
+            display.textContent = data.message || "Invalid request.";
+        }
+        else{
+            display.textContent = `User ${user} favorites successfully updated`
+        }
+
+    }
+    catch (err) {
+        console.log(err);
+        document.getElementById("displayresult").textContent="Server Error"
+        }
+}
+
+function displayFavorites(data){
+    const resultsDiv = document.getElementById("search-results");
+    //There should be not data in the HTML but removes just in case
+    resultsDiv.innerHTML="";
+
+    //console.log(`Here is what im attempting to display! ${data}`)
+
+    //normalize the data so its always an array to iterate over
+    let results;
+    if (Array.isArray(data)){
+        results = data;
+    }
+    else{
+        results = [data]
+    }
+    try {
+        for(let i=0;i<results.length;i++){
+            //Creating html element for display and displaying it
+            const card = document.createElement("div");
+            card.classList.add("result");
+            card.innerHTML=`<a class='rest_uri' href=${results[i].rest_uri}></a>
+                            <h3 class="rest_name" >${results[i].rest_name}</h3>
+                            <p class="rest_style" >${results[i].rest_style || '<br>'}</p> 
+                            <p class="rest_rating" >${results[i].rest_rating}</p>
+                            <p class="rest_address">${results[i].rest_address}</p>
+                            <img class="rest_image"  src=${results[i].rest_image || "./Resources/MissingImg.jpg"}>
+                            <input id="unfav-rest" type="submit" value="unFavorite" style="z-index:10">`
+                
+            //Adds event listener to entire card so entire card is clickable.
+            card.addEventListener('click', () =>{
+                window.open(`${results[i].rest_uri}`,'_blank')
+            })
+
+            card.querySelector('#unfav-rest').addEventListener('click', function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+                console.log(this.querySelector(('.rest_name').textContent))
+                sendDELRequest("/delFav",card) })
+            
+            
+           
+            
+        resultsDiv.appendChild(card)
+        }
+        }
+        
+    catch (err){
+        console.log("Given data is neither object or array ERROR", err)
+    }
+}
+
+async function fetchFavorites(route){
+    const user = document.getElementById('name').value
+    const display = document.getElementById('displayresult')
+    try {
+        console.log("attempting to get to favs") 
+        const response = await fetch(`http://localhost:5000/users/${user}${route}`, {
+            method: "GET",
+            headers: { "Content-Type": "application/json" },
+        });
+
+        const data = await response.json()
+        console.log(data)
+        if (!response.ok) {
+            display.textContent = data.message || "No favorites found.";
+        }
+        else{
+            display.textContent = `Found ${user}'s favorites successfully`
+            
+        }
+        //displayFavorites(data)
+        displayFavorites(data)
+    }
+    catch (err) {
+        console.log(err);
+        document.getElementById("displayresult").textContent="Server Error"
+        }
+}
+
+function createUserOnClick(button){
+    button.addEventListener('click', async (e) =>{
+        e.preventDefault();
+        sendPOSTRequest("/create-user")
+    })
+}
+
+function loginUserOnClick(button){
+    button.addEventListener('click', async (e) =>{
+        e.preventDefault();
+        sendPOSTRequest("/login")
+    })
+}
+
+function deleteUserOnClick(button){
+    button.addEventListener('click', async (e) =>{
+        e.preventDefault();
+        sendDELRequest("/delete")
+    })
+}
+
+function favOnClick(button){
+    button.addEventListener('click', async (e) =>{
+        e.preventDefault();
+        sendPUTRequest("/addFav")
+    })
+}
+function showFavOnClick(button){
+    button.addEventListener('click', async (e) =>{
+        e.preventDefault();
+        fetchFavorites("/favorites")
+    })
 }
 
 function searchOnClick(button){
     button.addEventListener("click", handleSearch)
 }
 
-//Adds event listener to search button
+//Adds event listener to buttons
 searchOnClick(searchbtn)
+createUserOnClick(createbtn)
+loginUserOnClick(loginbtn)
+deleteUserOnClick(deletebutton)
+showFavOnClick(showfavbutton)
+
+
 
 //debug purposes
 console.log("We made it we found the End!")

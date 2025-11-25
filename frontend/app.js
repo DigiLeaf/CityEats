@@ -1,5 +1,5 @@
 
-//Locates search button on homepage
+//Locates buttons on webpage
 const searchbtn = document.getElementById("searchbtn");
 const loadingdiv = document.getElementById("loading");
 const faileddiv = document.getElementById("failedsearch")
@@ -36,8 +36,8 @@ async function handleSearch(event){
             
         }
         else{
-            faileddiv.style.display ="block"
-            
+            //displays if search returns no results
+            faileddiv.style.display ="block"   
         }
     }
     catch (err){
@@ -96,16 +96,15 @@ function displayResults(data){
                             <input id="fav-rest" type="submit" value="Favorite" style="z-index:10">`
                 
             //Adds event listener to entire card so entire card is clickable.
+            card.addEventListener('click', () =>{
+                window.open(`${results[i].uri}`,'_blank')
+            })
+            //adds event listener to favorite button and removes website popup from button.
             card.querySelector('#fav-rest').addEventListener('click', function (e) {
                 e.preventDefault();
                 e.stopPropagation();
                 console.log(this.querySelector('#rest_name'.textContent))
                 sendPUTRequest("/addFav",card) })
-        
-
-            card.addEventListener('click', () =>{
-                window.open(`${results[i].uri}`,'_blank')
-            })
             
         resultsDiv.appendChild(card)
         }
@@ -118,11 +117,11 @@ function displayResults(data){
 
 //handles login/ user creation
 async function sendPOSTRequest(route){
+    //gets user inputted fields
     const name = document.getElementById('name').value
     const password = document.getElementById('password').value
     const display = document.getElementById('displayresult');
-
-
+    
     try {
         const response = await fetch(`https://cityeats-backend.onrender.com/users${route}`, {
             method: "POST",
@@ -135,10 +134,16 @@ async function sendPOSTRequest(route){
             display.textContent = data.message || "Invalid request.";
         }
         else{
-            display.textContent = data.message ||`User ${data.name} successfully ${route === '/login' ? 'logged in' : "created"}`
+            //if creating a user, notifies user was created. prompts user to log in
+            if(route ==='/create-user'){
+            display.textContent = data.message ||`User ${data.name} successfully created. Please loging to access more features.`
+            }
+            else{
+            // if logging in, notifies of successful login and shows user only features.
+            display.textContent = data.message ||`User ${data.name} successfully logged in`
             deletebutton.style.display="inline-block"
             showfavbutton.style.display="inline-block"
-
+            }
         }
     }
     catch (err) {
@@ -154,6 +159,7 @@ async function sendDELRequest(route, card = undefined){
     let response;
     try {
         if (!card){
+            //if not called by unfavorite button its called by the delete account button and wipes all of the user's data
         response = await fetch(`https://cityeats-backend.onrender.com/users${route}/${name}`, {
             method: "DELETE",
         })}
@@ -165,7 +171,7 @@ async function sendDELRequest(route, card = undefined){
                 //rest_uri: card.querySelector('.rest_uri').href,
 
             };
-
+            //called by unfavorite button and removes only specified favorite
             response = await fetch(`https://cityeats-backend.onrender.com/users${route}/${name}`, {
                 method: "DELETE",
                 headers: { "Content-Type": "application/json" },
@@ -179,9 +185,16 @@ async function sendDELRequest(route, card = undefined){
             display.textContent = data.message || "Invalid request.";
         }
         else{
+            //called by delete account button; hides all registered user functions
+            if (!card){
             display.textContent = `${name}'s data successfully deleted`
             deletebutton.style.display = "none"
             showfavbutton.style.display = "none"
+            }
+            //called by unfavorite; registered user acitons still available
+            else{
+                display.textContent = `Favorite successfully removed`
+            }
         }
 
     }
@@ -190,7 +203,6 @@ async function sendDELRequest(route, card = undefined){
         document.getElementById("displayresult").textContent="Server Error"
         }
 }
-
 
 
 //Handles updating Favorites list
@@ -222,7 +234,7 @@ async function sendPUTRequest(route, card){
             display.textContent = data.message || "Invalid request.";
         }
         else{
-            display.textContent = `User ${user} favorites successfully updated`
+            display.textContent = `${user}'s favorites successfully updated`
         }
 
     }
@@ -237,7 +249,7 @@ function displayFavorites(data){
     //There should be not data in the HTML but removes just in case
     resultsDiv.innerHTML="";
 
-    //console.log(`Here is what im attempting to display! ${data}`)
+    //console.log(`Heres favorites im attempting to display! ${data}`)
 
     //normalize the data so its always an array to iterate over
     let results;
@@ -264,20 +276,16 @@ function displayFavorites(data){
             card.addEventListener('click', () =>{
                 window.open(`${results[i].rest_uri}`,'_blank')
             })
-
+            //adds event listener to unfavorite button and removes website popup from button.
             card.querySelector('#unfav-rest').addEventListener('click', function (e) {
                 e.preventDefault();
                 e.stopPropagation();
                 console.log(this.querySelector(('.rest_name').textContent))
                 sendDELRequest("/delFav",card) })
-            
-            
-           
-            
+
         resultsDiv.appendChild(card)
         }
-        }
-        
+    }   
     catch (err){
         console.log("Given data is neither object or array ERROR", err)
     }
@@ -295,6 +303,7 @@ async function fetchFavorites(route){
 
         const data = await response.json()
         console.log(data)
+        
         if (!response.ok) {
             display.textContent = data.message || "No favorites found.";
         }
@@ -302,7 +311,6 @@ async function fetchFavorites(route){
             display.textContent = `Found ${user}'s favorites successfully`
             
         }
-        //displayFavorites(data)
         displayFavorites(data)
     }
     catch (err) {
@@ -311,6 +319,8 @@ async function fetchFavorites(route){
         }
 }
 
+
+//Event Listener functions
 function createUserOnClick(button){
     button.addEventListener('click', async (e) =>{
         e.preventDefault();
@@ -355,8 +365,6 @@ createUserOnClick(createbtn)
 loginUserOnClick(loginbtn)
 deleteUserOnClick(deletebutton)
 showFavOnClick(showfavbutton)
-
-
 
 //debug purposes
 console.log("We made it we found the End!")

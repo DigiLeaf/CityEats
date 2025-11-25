@@ -3,29 +3,29 @@ const router = express.Router();
 const User = require('../models/User')
 
 router.post('/create-user', async (req,res)=>{
-    console.log("Create user request recieved", req.body)
+    //console.log("Create user request recieved", req.body)
     try{
         const {name, password} = req.body;
 
         if (!name || !password) {
             return res.status(400).json({message:'Please provide all fields'})
         }
-
+        //checks if user already exists
         const existingUser =  await User.findOne({name});
-        console.log('checked if user exists')
         if (existingUser){
             return res.status(400).json({message: "User already exists"})
         }
 
+        //if user does not exist registers them to the database
         const newUser = new User({name, password})
 
         const savedUser= await newUser.save()
-        console.log("user created")
+        //console.log("user created")
         res.status(201).json(savedUser)
     }
     catch (err){
         console.log(err)
-        res.status(500).json({error: err.message})
+        res.status(500).json({message: 'Server Error during user creation'})
     }
 })
 
@@ -50,7 +50,7 @@ router.get("/:name", async (req, res)=>{
     }
     catch (err){
         console.log(err)
-        res.status(500).json({error: err.message})
+        res.status(500).json({message: 'Server Error getting specified user data'})
     }
 })
 
@@ -63,15 +63,13 @@ router.get("/:name/favorites", async (req, res)=>{
     }
     catch (err){
         console.log(err)
-        res.status(500).json({error: err.message})
+        res.status(500).json({message: 'Server Error during showing favorites'})
     }
 })
 
 
 //Login
-
 router.post('/login', async (req,res)=>{
-
     const {name, password} = req.body;
 
     try{
@@ -80,7 +78,6 @@ router.post('/login', async (req,res)=>{
         if(!user){
             return res.status(404).json({success: false, message: "User not found"})
         }
-
         if (user.password !== password){
             return res.status(401).json({success: false, message: "Invalid Password"})
         }
@@ -90,18 +87,13 @@ router.post('/login', async (req,res)=>{
             message: "Login Successful",
             user:{
                 name: user.name,
-                //favorites: user.favorites || []
             }
         })
     }
-
     catch (err){
         console.log(err)
-        res.status(500).json({success:false, message: "Server Error"})
+        res.status(500).json({success:false, message: "Server Error during login"})
     }
-
-
-
 })
 
 //Delete User Data
@@ -116,20 +108,19 @@ router.delete("/delete/:name", async (req,res)=>{
             message: `User ${req.params.name} successfully deleted`,
             user:{
                 name: deletedUser.name,
-                //favorites: user.favorites || []
             }
         })
     }
     catch(err){
         console.log(err);
-        res.status(500).json({message: 'Server Error'})
+        res.status(500).json({message: 'Server Error during user deletion'})
     }
 })
 
 router.delete('/delFav/:name', async (req,res)=>{
         try{
-            console.log("reqbody", req.body)
-        const delFav = await User.findOneAndUpdate(
+            //console.log("reqbody", req.body)
+            const delFav = await User.findOneAndUpdate(
             {name: req.params.name},
             {$pull: {favorites: {rest_address: req.body.rest_address}}},
             {new: true},
@@ -139,11 +130,11 @@ router.delete('/delFav/:name', async (req,res)=>{
         if(!delFav){
             return res.status(404).json({success: false, message: "Favorite not found"})
         }
-        console.log("FAVORITE SENT TO DELETE:", req.body);
+        //console.log("FAVORITE SENT TO DELETE:", req.body);
         res.status(200).json(delFav)
 
     }catch (err){
-        res.status(500).json({message: "Server Error during deletion"})
+        res.status(500).json({message: "Server Error during favorites deletion"})
     }
 })
 
@@ -163,7 +154,7 @@ router.put('/addFav/:name', async (req,res)=>{
         res.status(200).json(addedFavs)
 
     }catch (err){
-        res.status(500).json({message: "Server Error Updating"})
+        res.status(500).json({message: "Server Error adding favorites"})
     }
 })
 

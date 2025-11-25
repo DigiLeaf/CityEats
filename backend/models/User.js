@@ -3,7 +3,7 @@ const mongoose = require("mongoose")
 const userSchema = new mongoose.Schema({
     name: {type: String, required: true},
     password: {type: String, required: true},
-    favorites:[       // array of restaurants
+    favorites:[
         {
             rest_name: String,
             rest_address: String,
@@ -13,7 +13,6 @@ const userSchema = new mongoose.Schema({
             rest_image: String
         }
     ]    
-
 })
 
 module.exports = mongoose.model("User", userSchema);

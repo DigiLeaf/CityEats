@@ -1,45 +1,6 @@
 const API_url = process.env.API_URL
 const API_key = process.env.API_KEY
-/*
-THIS is the original way NON-POST Request
-async function apiFetch(city,style) {
-    console.log(`Attemplting to query the API with ${city} & ${style}`)
-    if (city=="" && style!="")
-    {
-        const queriedResults = await fetch(`${API_url}?category=${style}`)
-        .then((response) =>{return response.json()})
-        .catch((err) =>{console.log(err)})
 
-        console.log("Returned a result for style")
-        console.log(JSON.stringify(queriedResults))
-        return queriedResults;
-    }
-    else if (city!="" && style == "")
-    {
-        const queriedResults = await fetch(`${API_url}?name=${city}`)
-        .then((response) =>{return response.json()})
-        .catch((err) =>{console.log(err)})
-
-        console.log("returned a result for just city")
-        console.log(JSON.stringify(queriedResults))
-
-        return queriedResults;
-    }
-    else if(city!="" && style != "")
-    {
-        const queriedResults = await fetch(`${API_url}?name=${city}&category=${style}`)
-        .then((response) =>{return response.json()})
-        .catch((err) =>{console.log(err)})
-
-        console.log("Returned a result for both city and style")
-        console.log(JSON.stringify(queriedResults))
-        return queriedResults;
-    } 
-    else {
-        console.log("Error you shouldnt have gotten here!")
-    }    
-}
-*/
 
 async function apiFetch(city, prov, style) {
     const queriedResults = await fetch(`${API_url}`,
@@ -70,9 +31,6 @@ function imgGather(photoReference){
 
 }
 
-
-
-
 function trimAPIData(data){
     let trimmedData =[]
     let tobeTrim;
@@ -87,7 +45,8 @@ function trimAPIData(data){
     //rebuild object with only data frontend wants
     for(let i=0;i< tobeTrim.length;i++)
     {
-        let imageRef = null 
+        let imageRef = null
+        //gets the first image related to the restaurant if any
         if (tobeTrim[i].photos && tobeTrim[i].photos.length > 0){
             imageRef = tobeTrim[i].photos[0].name
         }

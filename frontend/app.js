@@ -93,8 +93,8 @@ function displayResults(data){
                             <p class="rest_style" >${results[i].style.slice(0,3).join(" - ")|| '<br>'}</p> 
                             <p class="rest_rating" >Rating:${results[i].rating}/5</p>
                             <p class="rest_address">${results[i].address}</p>
-                            <img class="rest_img"  src=${results[i].image || "./Resources/MissingImg.jpg"}>
-                            <input id="fav-rest" type="submit" value="Favorite" style="z-index:10">`
+                            <img class="rest_img"  src=${results[i].image || "./Resources/MissingImg.jpg"}>\
+                            <input id="fav-rest" class="favbtn" type="submit" value="Favorite" style="z-index:10">`
                 
             //Adds event listener to entire card so entire card is clickable.
             card.addEventListener('click', () =>{
@@ -106,7 +106,7 @@ function displayResults(data){
                 e.stopPropagation();
                 console.log(this.querySelector('#rest_name'.textContent))
                 sendPUTRequest("/addFav",card) })
-            
+
         resultsDiv.appendChild(card)
         }
         }
@@ -245,7 +245,7 @@ async function sendPUTRequest(route, card){
     }
     catch (err) {
         console.log(err);
-        document.getElementById("displayresult").textContent="Server Error"
+        document.getElementById("displayresult").textContent="Server Error, Please log in."
         }
 }
 
@@ -275,7 +275,7 @@ function displayFavorites(data){
                             <p class="rest_rating" >${results[i].rest_rating}</p>
                             <p class="rest_address">${results[i].rest_address}</p>
                             <img class="rest_image"  src=${results[i].rest_image || "./Resources/MissingImg.jpg"}>
-                            <input id="unfav-rest" type="submit" value="unFavorite" style="z-index:10">`
+                            <input id="unfav-rest" class="favbtn" type="submit" value="unFavorite" style="z-index:10">`
                 
             //Adds event listener to entire card so entire card is clickable.
             card.addEventListener('click', () =>{
@@ -289,6 +289,9 @@ function displayFavorites(data){
                 sendDELRequest("/delFav",card) })
 
         resultsDiv.appendChild(card)
+        }
+        if (results.length <=0){
+            const display = document.getElementById('displayresult');
         }
     }   
     catch (err){
@@ -350,6 +353,11 @@ function logoutUserOnClick(button){
         logoutbtn.style.display="none"
         loginbtn.style.display="inline-block"
         createbtn.style.display="inline-block"
+
+        const resultsDiv = document.getElementById("search-results");
+        //Clears the results once the user logs out prevents cross-account visibility
+        resultsDiv.innerHTML="";
+
         
     })
 }

@@ -124,7 +124,7 @@ async function sendPOSTRequest(route){
 
 
     try {
-        const response = await fetch(`http://localhost:5000/users${route}`, {
+        const response = await fetch(`https://cityeats-backend.onrender.com/users${route}`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ name, password })
@@ -154,7 +154,7 @@ async function sendDELRequest(route, card = undefined){
     let response;
     try {
         if (!card){
-        response = await fetch(`http://localhost:5000/users${route}/${name}`, {
+        response = await fetch(`https://cityeats-backend.onrender.com/users${route}/${name}`, {
             method: "DELETE",
         })}
         else{
@@ -166,7 +166,7 @@ async function sendDELRequest(route, card = undefined){
 
             };
 
-            response = await fetch(`http://localhost:5000/users${route}/${name}`, {
+            response = await fetch(`https://cityeats-backend.onrender.com/users${route}/${name}`, {
                 method: "DELETE",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(favToRemove)  
@@ -210,7 +210,7 @@ async function sendPUTRequest(route, card){
 
     try {
         console.log("attempting to add to favs", newFav) 
-        const response = await fetch(`http://localhost:5000/users${route}/${user}`, {
+        const response = await fetch(`https://cityeats-backend.onrender.com/users${route}/${user}`, {
             method: "PUT",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(newFav)
@@ -288,7 +288,7 @@ async function fetchFavorites(route){
     const display = document.getElementById('displayresult')
     try {
         console.log("attempting to get to favs") 
-        const response = await fetch(`http://localhost:5000/users/${user}${route}`, {
+        const response = await fetch(`https://cityeats-backend.onrender.com/users/${user}${route}`, {
             method: "GET",
             headers: { "Content-Type": "application/json" },
         });

@@ -148,7 +148,7 @@ router.put('/addFav/:name', async (req,res)=>{
         )
 
         if(!addedFavs){
-            return res.status(404).json({success: false, message: "User not found"})
+            return res.status(404).json({success: false, message: "User not found, please log in."})
         }
 
         res.status(200).json(addedFavs)

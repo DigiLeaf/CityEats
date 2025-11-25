@@ -6,6 +6,7 @@ const faileddiv = document.getElementById("failedsearch")
 
 const createbtn = document.getElementById("createbtn")
 const loginbtn = document.getElementById("loginbtn")
+const logoutbtn = document.getElementById("logoutbtn")
 const deletebutton = document.getElementById("deletebtn")
 const showfavbutton = document.getElementById("showfavbtn")
 
@@ -136,13 +137,17 @@ async function sendPOSTRequest(route){
         else{
             //if creating a user, notifies user was created. prompts user to log in
             if(route ==='/create-user'){
-            display.textContent = data.message ||`User ${data.name} successfully created. Please loging to access more features.`
+            display.textContent = data.message ||`User ${data.name} successfully created. Please login to access more features.`
             }
             else{
             // if logging in, notifies of successful login and shows user only features.
             display.textContent = data.message ||`User ${data.name} successfully logged in`
             deletebutton.style.display="inline-block"
             showfavbutton.style.display="inline-block"
+            logoutbtn.style.display="inline-block"
+            loginbtn.style.display="none"
+            createbtn.style.display = "none"
+
             }
         }
     }
@@ -335,6 +340,20 @@ function loginUserOnClick(button){
     })
 }
 
+function logoutUserOnClick(button){
+    button.addEventListener('click', async (e) =>{
+        e.preventDefault();
+        const display=document.getElementById("displayresult");
+        display.textContent = "Logged out successfully"
+        showfavbutton.style.display="none"
+        deletebutton.style.display="none"
+        logoutbtn.style.display="none"
+        loginbtn.style.display="inline-block"
+        createbtn.style.display="inline-block"
+        
+    })
+}
+
 function deleteUserOnClick(button){
     button.addEventListener('click', async (e) =>{
         e.preventDefault();
@@ -363,8 +382,10 @@ function searchOnClick(button){
 searchOnClick(searchbtn)
 createUserOnClick(createbtn)
 loginUserOnClick(loginbtn)
+logoutUserOnClick(logoutbtn)
 deleteUserOnClick(deletebutton)
 showFavOnClick(showfavbutton)
+
 
 //debug purposes
 console.log("We made it we found the End!")

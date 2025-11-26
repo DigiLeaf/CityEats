@@ -55,8 +55,8 @@ async function handleSearch(event){
 
 //Fetches restaurant Data based on user search criteria 
 async function FetchData(city, prov, style){
-const destUrl =  //`https://cityeats-backend.onrender.com/restaurants?city=${city}&prov=${prov}&style=${style}`
-                `http://localhost:5000/restaurants?city=${city}&prov=${prov}&style=${style}`
+const destUrl =  `https://cityeats-backend.onrender.com/restaurants?city=${city}&prov=${prov}&style=${style}`
+                //Local Testing endpoint: `http://localhost:5000/restaurants?city=${city}&prov=${prov}&style=${style}`
 
 //console.log("starting initial await")
 const arr = await fetch(destUrl)
@@ -127,7 +127,8 @@ async function sendPOSTRequest(route){
     const name = document.getElementById('name').value
     const password = document.getElementById('password').value    
     try {
-        const response = await fetch(/*`https://cityeats-backend.onrender.com/users${route}`*/`http://localhost:5000/users${route}`, {
+        //Local Testing Endpoint:`http://localhost:5000/users${route}`
+        const response = await fetch(`https://cityeats-backend.onrender.com/users${route}`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ name, password })
@@ -167,7 +168,8 @@ async function sendDELRequest(route, card = undefined){
     try {
         if (!card){
             //if not called by unfavorite button its called by the delete account button and wipes all of the user's data
-        response = await fetch(/*`https://cityeats-backend.onrender.com/users${route}/${name}`*/`http://localhost:5000/users${route}/${name}`, {
+            //Local testing endpoint: `http://localhost:5000/users${route}/${name}`
+        response = await fetch(`https://cityeats-backend.onrender.com/users${route}/${name}`, {
             method: "DELETE",
         })}
         else{
@@ -179,7 +181,8 @@ async function sendDELRequest(route, card = undefined){
 
             };
             //called by unfavorite button and removes only specified favorite
-            response = await fetch(/*`https://cityeats-backend.onrender.com/users${route}/${name}`*/`http://localhost:5000/users${route}/${name}`, {
+            //local testing endpoint `http://localhost:5000/users${route}/${name}`
+            response = await fetch(`https://cityeats-backend.onrender.com/users${route}/${name}`, {
                 method: "DELETE",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(favToRemove)  
@@ -239,7 +242,8 @@ async function sendPUTRequest(route, card){
 
     try {
         console.log("attempting to add to favs", newFav) 
-        const response = await fetch(/*`https://cityeats-backend.onrender.com/users${route}/${user}`*/`http://localhost:5000/users${route}/${user}`, {
+        //Local testing endpoint: `http://localhost:5000/users${route}/${user}`
+        const response = await fetch(`https://cityeats-backend.onrender.com/users${route}/${user}`, {
             method: "PUT",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(newFav)
@@ -328,7 +332,8 @@ async function fetchFavorites(route){
     const user = document.getElementById('name').value
     try {
         console.log("attempting to get to favs") 
-        const response = await fetch(/*`https://cityeats-backend.onrender.com/users/${user}${route}`*/`http://localhost:5000/users/${user}${route}`, {
+        /*Local Testing endpoint: `http://localhost:5000/users/${user}${route}`*/
+        const response = await fetch(`https://cityeats-backend.onrender.com/users/${user}${route}`, {
             method: "GET",
             headers: { "Content-Type": "application/json" },
         });

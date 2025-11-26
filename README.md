@@ -10,23 +10,28 @@ Check it out here:
  - Search restaurants by city and cuisine/style
  - View restaurant names, ratings, addresses
  - Uses Google Places API for accurate real-time data
- - Simple, responsive frontend and lightweight backend.
- 
+ - User favorites system with full CRUD
+
 ## Tech Stack
 - **Frontend:**
   - HTML
   - CSS
-  - JavaScript
+  - JavaScript 
 
 - **Backend**
   - Node.js
   - Express
 
+- **Database**
+  - MongoDB (Cloud Atlas Cluster)
+  - Mongoose (ODM)
+
 - **External APIs** 
   - Google Places
     
-- **Hosting Services**
-  - Render
+- **Deployment**
+  - Render (Backend & Frontend Hosting)
+  - MongoDB Atlas (cloud database)
 
 
 ## How it Works
@@ -42,13 +47,16 @@ Check it out here:
 3. Install backend dependencies
 ```npm install express, dotenv, cors```
 
-4. Set up environment variables (i.e. API_KEY, etc.).
-5. Start the server
+4. Set up environment variables (API_KEY, API_URL, MONGO_URI, PORT) within the backend directory.
+5. Update the frontend Fetch Urls. In the frontend JavaScript files, there are comments showing where you can switch between the deployed endpoint and a localhost version.
+Make sure the port number matches your backend.
+6. Start the server
 ```node server.js```
 
-6. Open the frontend index.html in your browser
+7. Open the frontend index.html in your browser
 
 ## Future Improvement
-- Improve search accuracy with location bias
 - Add mobile layout improvements
 - Add search result sorting/filtering capabilities
+- Add improved user sessions / user authenication
+- Hash passwords

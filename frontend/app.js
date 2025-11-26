@@ -3,12 +3,15 @@
 const searchbtn = document.getElementById("searchbtn");
 const loadingdiv = document.getElementById("loading");
 const faileddiv = document.getElementById("failedsearch")
+const nofavdiv = document.getElementById('nofavs')
 
 const createbtn = document.getElementById("createbtn")
 const loginbtn = document.getElementById("loginbtn")
 const logoutbtn = document.getElementById("logoutbtn")
 const deletebutton = document.getElementById("deletebtn")
 const showfavbutton = document.getElementById("showfavbtn")
+//appears next to user features gives status update of user action
+const displaymsg = document.getElementById("displayresult")
 
 //sends user search criteria to API 
 async function handleSearch(event){
@@ -48,12 +51,12 @@ async function handleSearch(event){
         loadingdiv.style.display = "none"
     }
 
-
 }
 
 //Fetches restaurant Data based on user search criteria 
 async function FetchData(city, prov, style){
-const destUrl =  `https://cityeats-backend.onrender.com/restaurants?city=${city}&prov=${prov}&style=${style}`
+const destUrl =  //`https://cityeats-backend.onrender.com/restaurants?city=${city}&prov=${prov}&style=${style}`
+                `http://localhost:5000/restaurants?city=${city}&prov=${prov}&style=${style}`
 
 //console.log("starting initial await")
 const arr = await fetch(destUrl)
@@ -88,13 +91,15 @@ function displayResults(data){
             //Creating html element for display and displaying it
             const card = document.createElement("div");
             card.classList.add("result");
-            card.innerHTML=`<a class='rest_uri' href=${results[i].uri}></a>
+            card.innerHTML=`<div class="rest">
+                            <a class='rest_uri' href=${results[i].uri}></a>
                             <h3 class="rest_name" >${results[i].name}</h3>
                             <p class="rest_style" >${results[i].style.slice(0,3).join(" - ")|| '<br>'}</p> 
                             <p class="rest_rating" >Rating:${results[i].rating}/5</p>
                             <p class="rest_address">${results[i].address}</p>
                             <img class="rest_img"  src=${results[i].image || "./Resources/MissingImg.jpg"}>\
-                            <input id="fav-rest" class="favbtn" type="submit" value="Favorite" style="z-index:10">`
+                            <input id="fav-rest" class="favbtn" type="submit" value="Favorite">
+                            </div>`
                 
             //Adds event listener to entire card so entire card is clickable.
             card.addEventListener('click', () =>{
@@ -120,11 +125,9 @@ function displayResults(data){
 async function sendPOSTRequest(route){
     //gets user inputted fields
     const name = document.getElementById('name').value
-    const password = document.getElementById('password').value
-    const display = document.getElementById('displayresult');
-    
+    const password = document.getElementById('password').value    
     try {
-        const response = await fetch(`https://cityeats-backend.onrender.com/users${route}`, {
+        const response = await fetch(/*`https://cityeats-backend.onrender.com/users${route}`*/`http://localhost:5000/users${route}`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ name, password })
@@ -132,16 +135,16 @@ async function sendPOSTRequest(route){
 
         const data = await response.json()
         if (!response.ok) {
-            display.textContent = data.message || "Invalid request.";
+            displaymsg.textContent = data.message || "Invalid request.";
         }
         else{
             //if creating a user, notifies user was created. prompts user to log in
             if(route ==='/create-user'){
-            display.textContent = data.message ||`User ${data.name} successfully created. Please login to access more features.`
+            displaymsg.textContent = data.message ||`User ${data.name} successfully created. Please login to access more features.`
             }
             else{
             // if logging in, notifies of successful login and shows user only features.
-            display.textContent = data.message ||`User ${data.name} successfully logged in`
+            displaymsg.textContent = data.message ||`User ${data.name} successfully logged in`
             deletebutton.style.display="inline-block"
             showfavbutton.style.display="inline-block"
             logoutbtn.style.display="inline-block"
@@ -153,19 +156,18 @@ async function sendPOSTRequest(route){
     }
     catch (err) {
         console.log(err);
-        document.getElementById("displayresult").textContent="Server Error"
+        displaymsg.textContent="Server Error"
         }
 }
 
 //handles deleting user data
 async function sendDELRequest(route, card = undefined){
     const name = document.getElementById('name').value
-    const display = document.getElementById('displayresult');
     let response;
     try {
         if (!card){
             //if not called by unfavorite button its called by the delete account button and wipes all of the user's data
-        response = await fetch(`https://cityeats-backend.onrender.com/users${route}/${name}`, {
+        response = await fetch(/*`https://cityeats-backend.onrender.com/users${route}/${name}`*/`http://localhost:5000/users${route}/${name}`, {
             method: "DELETE",
         })}
         else{
@@ -177,7 +179,7 @@ async function sendDELRequest(route, card = undefined){
 
             };
             //called by unfavorite button and removes only specified favorite
-            response = await fetch(`https://cityeats-backend.onrender.com/users${route}/${name}`, {
+            response = await fetch(/*`https://cityeats-backend.onrender.com/users${route}/${name}`*/`http://localhost:5000/users${route}/${name}`, {
                 method: "DELETE",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(favToRemove)  
@@ -187,25 +189,37 @@ async function sendDELRequest(route, card = undefined){
         const data = await response.json()
         console.log(data)
         if (!response.ok) {
-            display.textContent = data.message || "Invalid request.";
+            displaymsg.textContent = data.message || "Invalid request.";
         }
         else{
-            //called by delete account button; hides all registered user functions
+            //called by delete account button; hides all registered user functions & returns to initial page state
             if (!card){
-            display.textContent = `${name}'s data successfully deleted`
+            displaymsg.textContent = `${name}'s data successfully deleted`
             deletebutton.style.display = "none"
             showfavbutton.style.display = "none"
+            logoutbtn.style.display="none"
+            loginbtn.style.display="inline-block"
+            createbtn.style.display = "inline-block"
+
+            loadingdiv.style.display="none"
+            faileddiv.style.display="none"
+            nofavdiv.style.display="none"
+
+            
+            const resultsDiv = document.getElementById("search-results");
+            //Clears the results once the user logs out prevents cross-account visibility
+            resultsDiv.innerHTML="";
             }
             //called by unfavorite; registered user acitons still available
             else{
-                display.textContent = `Favorite successfully removed`
+                displaymsg.textContent = `Favorite successfully removed`
             }
         }
 
     }
     catch (err) {
         console.log(err);
-        document.getElementById("displayresult").textContent="Server Error"
+        displaymsg.textContent="Server Error"
         }
 }
 
@@ -223,11 +237,9 @@ async function sendPUTRequest(route, card){
         rest_uri: card.querySelector('.rest_uri').href,
     }
 
-    const display = document.getElementById('displayresult');
-
     try {
         console.log("attempting to add to favs", newFav) 
-        const response = await fetch(`https://cityeats-backend.onrender.com/users${route}/${user}`, {
+        const response = await fetch(/*`https://cityeats-backend.onrender.com/users${route}/${user}`*/`http://localhost:5000/users${route}/${user}`, {
             method: "PUT",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(newFav)
@@ -236,21 +248,24 @@ async function sendPUTRequest(route, card){
         const data = await response.json()
         console.log(data)
         if (!response.ok) {
-            display.textContent = data.message || "Invalid request.";
+            displaymsg.textContent = data.message || "Invalid request.";
         }
         else{
-            display.textContent = `${user}'s favorites successfully updated`
+            displaymsg.textContent = `${user}'s favorites successfully updated`
         }
 
     }
     catch (err) {
         console.log(err);
-        document.getElementById("displayresult").textContent="Server Error, Please log in."
+        displaymsg.textContent="Server Error, Please login."
         }
 }
 
 function displayFavorites(data){
     const resultsDiv = document.getElementById("search-results");
+    console.log("nofav element =", nofavdiv);     // Should NOT be null
+    console.log("data =", data);               // Should be []
+    console.log("data.length =", data.length)
     //There should be not data in the HTML but removes just in case
     resultsDiv.innerHTML="";
 
@@ -258,24 +273,36 @@ function displayFavorites(data){
 
     //normalize the data so its always an array to iterate over
     let results;
+  
     if (Array.isArray(data)){
         results = data;
     }
     else{
         results = [data]
     }
+
+    //tells the user if their favorites list is empty
+    if ((results.length === 0)||(results.length === undefined)) { 
+        nofavdiv.style.display = "inline-block";  // or "flex" or "inline-block"
+        return; // STOP here — nothing to render
+    } else {
+        nofavdiv.style.display = "none"; // hide it if we have favorites
+    }
     try {
         for(let i=0;i<results.length;i++){
             //Creating html element for display and displaying it
             const card = document.createElement("div");
             card.classList.add("result");
-            card.innerHTML=`<a class='rest_uri' href=${results[i].rest_uri}></a>
-                            <h3 class="rest_name" >${results[i].rest_name}</h3>
+            card.innerHTML=`<div class="rest">
+                            <a class='rest_uri' href=${results[i].rest_uri}></a>
+                            <h3 class="rest_name" >${results[i].rest_name}</h3> 
                             <p class="rest_style" >${results[i].rest_style || '<br>'}</p> 
                             <p class="rest_rating" >${results[i].rest_rating}</p>
                             <p class="rest_address">${results[i].rest_address}</p>
                             <img class="rest_image"  src=${results[i].rest_image || "./Resources/MissingImg.jpg"}>
-                            <input id="unfav-rest" class="favbtn" type="submit" value="unFavorite" style="z-index:10">`
+                            <input id="unfav-rest" class="favbtn" type="submit" value="Unfavorite" >
+                            </div>
+                            `
                 
             //Adds event listener to entire card so entire card is clickable.
             card.addEventListener('click', () =>{
@@ -290,9 +317,7 @@ function displayFavorites(data){
 
         resultsDiv.appendChild(card)
         }
-        if (results.length <=0){
-            const display = document.getElementById('displayresult');
-        }
+
     }   
     catch (err){
         console.log("Given data is neither object or array ERROR", err)
@@ -301,10 +326,9 @@ function displayFavorites(data){
 
 async function fetchFavorites(route){
     const user = document.getElementById('name').value
-    const display = document.getElementById('displayresult')
     try {
         console.log("attempting to get to favs") 
-        const response = await fetch(`https://cityeats-backend.onrender.com/users/${user}${route}`, {
+        const response = await fetch(/*`https://cityeats-backend.onrender.com/users/${user}${route}`*/`http://localhost:5000/users/${user}${route}`, {
             method: "GET",
             headers: { "Content-Type": "application/json" },
         });
@@ -313,17 +337,17 @@ async function fetchFavorites(route){
         console.log(data)
         
         if (!response.ok) {
-            display.textContent = data.message || "No favorites found.";
+            displaymsg.textContent = data.message || "No favorites found.";
         }
         else{
-            display.textContent = `Found ${user}'s favorites successfully`
+            displaymsg.textContent = `Found ${user}'s favorites successfully`
             
         }
         displayFavorites(data)
     }
     catch (err) {
         console.log(err);
-        document.getElementById("displayresult").textContent="Server Error"
+        displaymsg.textContent="Server Error"
         }
 }
 
@@ -343,16 +367,22 @@ function loginUserOnClick(button){
     })
 }
 
+
 function logoutUserOnClick(button){
     button.addEventListener('click', async (e) =>{
         e.preventDefault();
-        const display=document.getElementById("displayresult");
-        display.textContent = "Logged out successfully"
+        displaymsg.textContent = "Logged out successfully"
+        //reset page to initial login
         showfavbutton.style.display="none"
         deletebutton.style.display="none"
         logoutbtn.style.display="none"
         loginbtn.style.display="inline-block"
         createbtn.style.display="inline-block"
+        
+        loadingdiv.style.display="none"
+        faileddiv.style.display="none"
+        nofavdiv.style.display="none"
+
 
         const resultsDiv = document.getElementById("search-results");
         //Clears the results once the user logs out prevents cross-account visibility

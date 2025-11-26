@@ -130,7 +130,6 @@ router.delete('/delFav/:name', async (req,res)=>{
         if(!delFav){
             return res.status(404).json({success: false, message: "Favorite not found"})
         }
-        //console.log("FAVORITE SENT TO DELETE:", req.body);
         res.status(200).json(delFav)
 
     }catch (err){

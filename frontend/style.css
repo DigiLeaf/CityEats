@@ -26,7 +26,6 @@ header{
     position:fixed;
     z-index:10;
     width:100%;
-
 }
 .pagetitle {
     width:100%;
@@ -64,6 +63,7 @@ header{
     flex-wrap: wrap;
     justify-content: flex-start;
     justify-content: space-evenly;
+    padding-bottom: 3.5rem;
 }
 
 .result{
@@ -129,11 +129,30 @@ header{
 }
 
 .favbtn{
-    background-color: #ccc;
+    position:absolute;
+    background-color: #DFDCE3;
     cursor: pointer;
     margin: 0rem 0.5rem 0rem 0.1rem;
     padding: 0.375rem;
-    margin-top: 0.5rem;
     font-size: 1.063rem;
     border: none;
+    top: 0rem;
+    right:0.5rem;
+    border-radius: 0.5rem;
+
+}
+
+.favbtn:hover{
+  background-color: #ccc;
+  cursor: pointer;
+}
+
+.notifs{
+    text-align: center;
+    width:100%;
+    color: #DFDCE3;
+}
+
+.rest{
+   position:relative 
 }

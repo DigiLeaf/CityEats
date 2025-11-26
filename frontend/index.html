@@ -29,11 +29,11 @@
             </form>
         </header>
             <!--Display of Search results based on area-->
-            <div id="search-results" class="search-results">
-                <div id="loading" class="loading-message" style="display:none"> Loading Results... </div>
-                <div id="failedsearch" class="failed-search" style="display:none"> Sorry, no results for that search. Try another query.</div>
-                <div id="nofavs" class="no-favorites" style="display:none">Sorry, no favorites found. Go find some good restaurants!</div>             
-            </div>
+            <div id="search-results" class="search-results"></div>
+            <!--Used to display imporant messages to user-->
+            <div id="loading" class="loading-message notifs" style="display:none"> Loading Results... </div>
+            <div id="failedsearch" class="failed-search notifs" style="display:none"> Sorry, no results for that search. Try another query.</div>
+            <div id="nofavs" class="no-favorites notifs" style="display:none">Sorry, no favorites found. Go find some good restaurants!</div>
 
 
             <!--User Functions stays at the bottom all the time-->
@@ -45,6 +45,7 @@
                 <input id ="logoutbtn" class= "btn" type="submit" value="Logout" style="display: none">
                 <input id="deletebtn" class = "btn" type="submit" value="Delete Account" style="display: none">
                 <input id="showfavbtn" class = "btn" type="submit" value="Show Favorites" style="display: none">
+            <!--Used to tell the user the status of their actions-->
                 <div id="displayresult"></div>
                 
             </div>

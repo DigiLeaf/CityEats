@@ -5,6 +5,8 @@ The app provides restaurant names, ratings, primary cuisine styles, and addresse
 ## Live Demo
 Check it out here:
  - https://cityeats.onrender.com
+ 
+ **Note:** The backend is hosted on Render’s free tier, so it may take up to **1 minute** to wake up on the first request. Please be patient.
 
 ## Features
  - Search restaurants by city and cuisine/style
